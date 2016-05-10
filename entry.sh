@@ -2,14 +2,12 @@
 
 CONFIG=/opt/gungnir-server/conf/gungnir.yaml
 
-function local_mode {
+local_mode() {
 	echo "cluster.mode: local."
-	su - gennai \
-		/opt/gungnir-server/bin/gungnir-server.sh start \
-		/opt/gungnir-server/conf/gungnir-standalone.yaml
+	/opt/gungnir-server/bin/gungnir-server.sh start /opt/gungnir-server/conf/gungnir-standalone.yaml
 }
 
-function distributed_mode {
+distributed_mode() {
 	echo "cluster.mode: distributed."
 
 	### ROLE (gungnir-server/tuple-store-server)
@@ -139,9 +137,7 @@ function distributed_mode {
 		${CONFIG}
 
 	### run
-	su - gennai \
-		/opt/gungnir-server/bin/${ROLE}-server.sh start \
-		/opt/gungnir-server/conf/gungnir.yaml
+	/opt/gungnir-server/bin/${ROLE}-server.sh start /opt/gungnir-server/conf/gungnir.yaml
 }
 
 ### common

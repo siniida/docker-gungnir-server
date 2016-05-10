@@ -1,23 +1,16 @@
-FROM centos:6
+FROM alpine
 MAINTAINER siniida <sinpukyu@gmail.com>
 
-RUN yum update -y
-RUN yum install -y tar
+ENV GUNGNIR_VERSION=0.0.1
 
-RUN groupadd -r gennai
-RUN useradd -g gennai gennai
+RUN apk --no-cache add openjdk8-jre bash \
+  && mkdir /opt \
+  && wget -O - https://s3-ap-northeast-1.amazonaws.com/gennai/release/gungnir-server-${GUNGNIR_VERSION}-bin.tar.gz | tar zx -C /opt \
+  && ln -s /opt/gungnir-server-${GUNGNIR_VERSION} /opt/gungnir-server \
+  && mkdir -p /opt/gungnir-server/logs \
+  && chown -R root:root /opt/gungnir-server-${GUNGNIR_VERSION}
 
-RUN curl -L -O -b "oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/7u80-b15/jre-7u80-linux-x64.rpm
-RUN rpm -ivh jre-7u80-linux-x64.rpm && rm jre-7u80-linux-x64.rpm
-
-RUN curl https://s3-ap-northeast-1.amazonaws.com/gennai/release/gungnir-server-0.0.1-bin.tar.gz | tar zx -C /opt
-RUN ln -s /opt/gungnir-server-0.0.1 /opt/gungnir-server
-RUN mkdir -p /opt/gungnir-server/logs
-RUN chown -R gennai:gennai /opt/gungnir-server-0.0.1
-
-RUN yum clean all
-
-ENV JAVA_HOME /usr/java/default
+ENV JAVA_HOME /usr/lib/jvm/default-jvm/jre
 
 EXPOSE 7100 7200 7300
 
